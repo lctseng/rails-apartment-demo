@@ -10,10 +10,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
-
+  def create
+    super do |user|
+      Apartment::Tenant.create(user.tenant_name)
+    end
+  end
+  
   # GET /resource/edit
   # def edit
   #   super

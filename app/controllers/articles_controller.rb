@@ -1,7 +1,11 @@
 class ArticlesController < ApplicationController
-  before_action :set_article, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
   
+  before_action :authenticate_user!
+  before_action :switch_tenant
+  before_action :set_article, only: [:show, :edit, :update, :destroy]
+  
+  
+
   # GET /articles
   # GET /articles.json
   def index
@@ -65,11 +69,16 @@ class ArticlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
+      logger.info "set article!"
       @article = Article.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def article_params
       params.require(:article).permit(:title, :content)
+    end
+
+    def switch_tenant
+      Apartment::Tenant.switch! current_user.tenant_name
     end
 end
